@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { bookMock } from "./data/data";
 
@@ -16,7 +17,14 @@ export default function DetailPage({ searchParams }: { searchParams: { id?: stri
             {/* 책기본 정보 */}
             <div className="bg-white rounded-xl shadow p-8 flex gap-8 mb-10">
                 <div className="w-100 h-120 bg-gray-100 rounded overflow-hidden">
-                    <img src={book.book_image} alt="book cover" className="w-full h-full object-cover" />
+                    <Image
+                        src={book.book_image}
+                        alt="book cover"
+                        width={400}
+                        height={600}
+                        className="w-full h-full object-cover"
+                    />
+
                 </div>
 
                 <div>
