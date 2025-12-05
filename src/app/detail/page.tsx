@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { bookMock } from "./data/data";
 
 export default function DetailPage({ searchParams }: { searchParams: { id?: string } }) {
+    const router = useRouter();
     const id = searchParams.id;
 
     const book = bookMock;
@@ -35,7 +39,12 @@ export default function DetailPage({ searchParams }: { searchParams: { id?: stri
             <div className="flex gap-3 mt-10 justify-end">
 
                 {/* 목록? 뒤로가기? */}
-                <Link href="/" className="px-4 py-2 bg-gray-200 rounded">목록</Link>
+                <button
+                    onClick={() => router.back()}
+                    className="px-4 py-2 bg-gray-200 rounded"
+                >
+                    목록
+                </button>
 
                 <Link
                     href={`/edit?id=${id}`}
