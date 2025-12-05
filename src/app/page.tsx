@@ -1,65 +1,70 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+import {NextPage} from "next";
+import {Button, Pagination} from "@mui/material";
+import BookCard from "@/app/components/BookCard";
+import AddIcon from '@mui/icons-material/Add';
+import AutoStoriesOutlinedIcon from '@mui/icons-material/AutoStoriesOutlined';
+import {books} from "@/app/data/books";
+import {useRouter, usePathname, useSearchParams} from "next/navigation";
+
+const HomePage: NextPage = () => {
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
+    const page = Number(searchParams.get('page')) || 1;
+    const limit = 5; // 페이지당 보여줄 책의 수
+    const count = 30; // 전체 페이지 수 (API로부터 받아와야 할 값)
+
+    const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+        const params = new URLSearchParams(searchParams);
+        params.set('page', value.toString());
+        router.push(`${pathname}?${params.toString()}`);
+    };
+
+    return (
+        <main className="flex flex-col items-center w-full min-h-screen px-8 py-10 bg-white text-black">
+            <div className="flex justify-between items-center w-full max-w-5xl mb-8">
+                <h2 className="text-3xl font-bold flex items-center gap-2 ">
+                    <AutoStoriesOutlinedIcon sx={{mr: 1}}/> Walking Library
+                </h2>
+
+                <Button variant="contained" sx={{backgroundColor: 'black', '&:hover': {backgroundColor: '#333'}}}>
+                    My Bookshelf
+                </Button>
+            </div>
+
+            <div className="flex justify-between items-center w-full max-w-5xl mb-6 ">
+                <h2 className="text-2xl font-semibold">BOOK LIST</h2>
+
+                <Button variant="contained" sx={{backgroundColor: 'black', '&:hover': {backgroundColor: '#333'}}}>
+                    <AddIcon fontSize={"small"} sx={{mr: 1}}/> Add Book
+                </Button>
+            </div>
+
+            {/*
+                todo 1: 실제 API 연동 시에는 더미데이터 X 실제 데이터로 변경
+                todo 2: 추가로 key={idx} book.book_id 로 수정 예정
+            */}
+            <div className="w-full max-w-5xl">
+                {books.map((book, idx) => (
+                    <BookCard key={idx} {...book} />
+                ))}
+            </div>
+
+            <div className="flex justify-center w-full max-w-5xl mt-8">
+                <Pagination
+                    count={count}
+                    page={page}
+                    onChange={handlePageChange}
+                    color="secondary"
+                    showFirstButton
+                    showLastButton
+                />
+            </div>
+        </main>
+    );
 }
+
+export default HomePage;
