@@ -47,6 +47,13 @@ export default function DetailPage({
                     </p>
                 </div>
             ))}
+
+            {/* 버튼 영역 */}
+            <div className="flex gap-3 mt-10 justify-end">
+                <Link href="/list"/*목록주소*/ className="px-4 py-2 bg-gray-200 rounded">목록</Link>
+                <Link href={`/edit?id=${id}`}/*수정페이지 주소*/ className="px-4 py-2 bg-blue-500 text-white rounded">수정</Link>
+                <button className="px-4 py-2 bg-red-500 text-white rounded">삭제</button>
+            </div>
         </div>
     );
 }
