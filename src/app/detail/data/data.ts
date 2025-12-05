@@ -1,8 +1,19 @@
+// src/app/detail/data/data.ts
+
 export const bookMock = {
-    title: "The Seasons of Memory",
-    username: "야호작가",
-    genre: "Fantasy",
-    summary: "이 책은 기억을 잃은 한 남성에 대한 이야기 입니다.(책 요약)",
-    book_image: "/next.svg",
-    content: "책내용"
+    success: true,
+    data: {
+        bookCd: "B0001",
+        bookNm: "어둠 속의 속삭임1",
+        bookSummaryDc: "사라진 기억을 찾아가는 주인공의 미스터리 서사",
+        bookContentDc: "도서 내용...",
+        userCd: "U0001",
+        userNickNm: "철이름",
+        bookGenreFg: "MYSTERY",
+        bookCreateDt: "2025-01-15T10:24:52",
+        bookModifyDt: "2025-01-15T10:24:52",
+        coverFileEn: "base64EncodedImageString",
+        coverCd: "C0001",
+    },
+    error: null,
 };
