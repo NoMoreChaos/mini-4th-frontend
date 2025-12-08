@@ -117,6 +117,10 @@ export default function CoverGenerate({ onSelectCover }: CoverGenerateProps) {
             sx={{
                 borderRadius: 3, // 둥근 모서리
                 p: 3,            // padding
+                minHeight: 620,          // ← 카드 기본 높이 확보
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
             }}
         >
             {/* 제목 */}
@@ -138,6 +142,9 @@ export default function CoverGenerate({ onSelectCover }: CoverGenerateProps) {
                     {/* 프롬프트 입력창 */}
                     <TextField
                         fullWidth
+                        multiline={true}
+                        minRows={3}
+                        maxRows={6}
                         placeholder="e.g., Dark fantasy with mystical elements"
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
@@ -154,6 +161,7 @@ export default function CoverGenerate({ onSelectCover }: CoverGenerateProps) {
                         mt: 1,
                         py: 1.2,
                         fontWeight: 500,
+                        fontSize: "0.95rem",
                         backgroundColor: "black",
                         "&:hover": { backgroundColor: "#333" },
                     }}
