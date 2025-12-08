@@ -134,3 +134,5 @@ src/
 ├── hooks/              # 커스텀 React Hooks
 └── types/              # TypeScript 타입 정의
 ```
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=auto&height=150&section=footer" />
