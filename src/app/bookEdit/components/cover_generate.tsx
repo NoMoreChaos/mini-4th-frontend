@@ -9,6 +9,8 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import CoverCandidateList from "@/app/bookEdit/components/covers/CandidateCoverList";
+import {CoverImage} from "@/types/cover";
 
 /**
  * Request Log 한 줄을 표현하는 타입 정의
@@ -21,7 +23,11 @@ interface RequestLogItem {
     timeSec: number;
 }
 
-export default function CoverGenerate() {
+interface CoverGenerateProps {
+    onSelectCover? : (cover: CoverImage) => void;
+}
+
+export default function CoverGenerate({ onSelectCover }: CoverGenerateProps) {
     /**
      * 사용자가 입력하는 프롬프트
      */
@@ -52,6 +58,29 @@ export default function CoverGenerate() {
         },
     ]);
 
+    // Dummy candidate images (UI 테스트용)
+    const [candidates] = useState<CoverImage[]>([
+        {
+            id: "1",
+            url: "https://images.unsplash.com/photo-1526045478516-99145907023c",
+            prompt: ""
+        },
+        {
+            id: "2",
+            url: "https://images.unsplash.com/photo-1532012197267-da84d127e765",
+            prompt: ""
+        },
+        {
+            id: "3",
+            url: "https://images.unsplash.com/photo-1507842217343-583bb7270b66",
+            prompt: ""
+        },
+    ]);
+
+    // 🔹 어떤 후보가 선택됐는지 (UI + 부모에 전달)
+    const [selectedId, setSelectedId] = useState<string | null>(null);
+
+
     /**
      * "Generate Cover" 버튼 클릭 시 실행되는 함수
      * 현재는 API가 없기 때문에 단순히 로그만 추가하는 역할
@@ -71,8 +100,15 @@ export default function CoverGenerate() {
         // 기존 logs 배열의 맨 앞에 새 로그 추가
         setLogs((prev) => [newItem, ...prev]);
 
-        // 입력창 초기화
-        setPrompt("");
+    };
+
+    // 🔹 썸네일 클릭 시 호출
+    const handleSelectCandidate = (id: string) => {
+        setSelectedId(id);
+        const cover = candidates.find((c) => c.id === id);
+        if (cover && onSelectCover) {
+            onSelectCover(cover); // 부모(page.tsx)에게 선택 알림
+        }
     };
 
     return (
@@ -165,6 +201,13 @@ export default function CoverGenerate() {
                         )}
                     </Box>
                 </Box>
+                {/* 🔹 후보 썸네일 리스트 */}
+                <CoverCandidateList
+                    candidates={candidates}
+                    selectedId={selectedId}
+                    onSelect={handleSelectCandidate}
+                />
+
             </Stack>
         </Paper>
     );

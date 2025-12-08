@@ -11,7 +11,7 @@ interface  MainPreviewCoverProps {
     cover: CoverImage | null;
 }
 
-export default function MainPreviewCove({ cover }: MainPreviewCoverProps) {
+export default function MainPreviewCover({ cover }: MainPreviewCoverProps) {
     if(!cover){
         // 선택된 표지가 없을 때
         return (
@@ -27,7 +27,7 @@ export default function MainPreviewCove({ cover }: MainPreviewCoverProps) {
                     sx={{
                         borderRadius: 2,
                         border: "1px dashed #ccc",
-                        height: 220,
+                        aspectRatio: "3 / 4",  // 책 표지 비율 적용
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -55,7 +55,7 @@ export default function MainPreviewCove({ cover }: MainPreviewCoverProps) {
                 sx={{
                     borderRadius: 2,
                     overflow: "hidden",
-                    height: 220, // 3:4 비율 맞추고 싶으면 나중에 조정
+                    aspectRatio: "3 / 4",  // 책 표지 비율 적용
                 }}
             >
                 <CardMedia
