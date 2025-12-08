@@ -1,4 +1,4 @@
-// src/components/bookEdit/fields/GenreChoice.tsx
+// src/components/bookEdit/components/GenreChoice.tsx
 "use client";
 
 import TextField from "@mui/material/TextField";
@@ -16,7 +16,7 @@ const GENRES = ["Fantasy", "Romance", "SF", "Essay", "Horror", "Etc"];
 export default function GenreChoice({ value, onChange }: GenreChoiceProps) {
     return (
         <Stack spacing={1} mt={2}>
-            <Typography fontWeight={700}>Summary</Typography>
+            <Typography fontWeight={700}>Genre</Typography>
             <TextField
                 select
                 fullWidth
