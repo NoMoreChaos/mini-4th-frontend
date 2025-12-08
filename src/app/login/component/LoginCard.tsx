@@ -5,32 +5,22 @@ import {
     Button,
     Card,
     CardContent,
-    IconButton,
-    InputAdornment,
     TextField,
     Typography
 } from "@mui/material";
 import {useState} from "react";
-import {useRouter} from "next/navigation";
-import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 import PasswordTextField from "@/app/login/component/PasswordTextField";
+import {LoginCardProps} from "@/app/login/types";
 
-const LoginCard = () => {
-    const router = useRouter();
+const LoginCard = ({ onLogin }: LoginCardProps) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
-
     const handleLogin = () => {
-        if (username && password) {
-            console.log("Login attempt with:", {username, password});
-            // todo: 여기에 실제 로그인 로직을 추가
-            router.push("/");
-        } else {
-            alert("아이디와 비밀번호를 입력해주세요.");
-        }
+        if (username && password) onLogin(username, password);
+        else alert("아이디와 비밀번호를 입력해주세요.");
     };
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
