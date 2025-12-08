@@ -40,6 +40,7 @@
 - 책 상세 페이지로 이동 가능
 - 새 책 커버 생성 버튼 제공
 <img width="2553" height="1339" alt="image" src="https://github.com/user-attachments/assets/c7521d73-02fb-4f9f-85db-256591922e6b" />
+<img width="2555" height="1128" alt="image" src="https://github.com/user-attachments/assets/79a6b54d-57cd-4f84-8722-0095ba3b5de6" />
 
 ### 3. 🎨 책 커버 생성 페이지
 - 기본 템플릿 기반 커버 생성
