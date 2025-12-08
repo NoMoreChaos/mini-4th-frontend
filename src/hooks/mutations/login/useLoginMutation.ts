@@ -18,8 +18,9 @@ export const useLoginMutation = () => {
         },
 
         onSuccess: (data) => {
-            if (data.success) {
-                alert("로그인 성공!");
+            if (data.success && data.data) {
+                // 로컬 스토리지에 userCd를 저장합니다.
+                localStorage.setItem('userCd', data.data.userCd);
                 router.push("/");
             } else {
                 alert(data.error ?? "로그인 실패");
