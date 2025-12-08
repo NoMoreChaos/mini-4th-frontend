@@ -137,6 +137,7 @@ export default function BookCoverPage() {
 
             const bookData = {
                 userCd: "sampleUserCd",
+                userNickNm: "sampleUserNick",
                 bookNm: title,
                 bookSummaryDc: summary,
                 bookContentDc: content,
@@ -146,28 +147,23 @@ export default function BookCoverPage() {
                 coverFileEn: covers[0], // 대표 이미지
             };
 
-            // api/generate-book 호출
             const res = await fetch("/api/generate-book", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(bookData),
             });
 
-            const data = await res.json().catch(() => ({}));
-
             if (!res.ok) {
-                const message = (data as any).error || "작품 등록 실패";
+                const data = await res.json().catch(() => null);
+                const message = data?.error || "작품 등록 실패";
                 alert(message);
                 return;
             }
 
             alert("작품 등록 완료!");
         } catch (err: unknown) {
-            if (err instanceof Error) {
-                alert(err.message || "작품 등록 중 오류가 발생했습니다.");
-            } else {
-                alert("작품 등록 중 오류가 발생했습니다.");
-            }
+            if (err instanceof Error) {alert(err.message || "이미지 생성 오류");}
+            else {alert("이미지 생성 오류");}
         } finally {
             setSaving(false);
         }
