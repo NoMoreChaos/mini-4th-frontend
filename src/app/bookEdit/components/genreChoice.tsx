@@ -1,4 +1,4 @@
-// src/components/bookEdit/fields/GenreChoice.tsx
+// src/components/bookEdit/components/GenreChoice.tsx
 "use client";
 
 import TextField from "@mui/material/TextField";
