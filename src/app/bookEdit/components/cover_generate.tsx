@@ -1,6 +1,5 @@
 // src/components/books/CoverGenerate.tsx
 "use client";
-// Next.js App Router에서는 컴포넌트에 클라이언트 기능(useState 등)을 쓰려면 필요함.
 
 import { useState } from "react";
 import Box from "@mui/material/Box";
@@ -9,57 +8,39 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
-import CoverCandidateList from "@/app/bookEdit/components/covers/CandidateCoverList";
-import {CoverImage} from "@/types/cover";
 
-/**
- * Request Log 한 줄을 표현하는 타입 정의
- * (UI 테스트용 데이터 구조)
- */
+import CoverCandidateList from "@/app/bookEdit/components/covers/CandidateCoverList";
+import { CoverImage } from "@/types/cover";
+import { useGenerateImageMutation } from "@/hooks/mutations/generate-image/generateImage";
+
 interface RequestLogItem {
     id: number;
     prompt: string;
-    status: "Success" | "Error";
+    status: "Success" | "Error" | "Pending";
     timeSec: number;
 }
 
 interface CoverGenerateProps {
-    onSelectCover? : (cover: CoverImage) => void;
+    onSelectCover?: (cover: CoverImage) => void;
+    title: string;
+    summary: string;
+    content: string;
+    genre: string;
 }
 
-export default function CoverGenerate({ onSelectCover }: CoverGenerateProps) {
-    /**
-     * 사용자가 입력하는 프롬프트
-     */
+export default function CoverGenerate({
+                                          onSelectCover,
+    title,
+    summary,
+    content,
+    genre,
+
+                                      }: CoverGenerateProps) {
     const [prompt, setPrompt] = useState("");
+    const [logs, setLogs] = useState<RequestLogItem[]>([]);
 
-    /**
-     * Request Log 목록 (UI용 더미 데이터)
-     * 나중에 실제 API 호출 데이터를 넣으면 교체됨
-     */
-    const [logs, setLogs] = useState<RequestLogItem[]>([
-        {
-            id: 1,
-            prompt: "Cherry blossom...",
-            status: "Success",
-            timeSec: 1.8,
-        },
-        {
-            id: 2,
-            prompt: "Minimalist design...",
-            status: "Success",
-            timeSec: 2.1,
-        },
-        {
-            id: 3,
-            prompt: "Dark fantasy...",
-            status: "Success",
-            timeSec: 1.9,
-        },
-    ]);
-
-    // Dummy candidate images (UI 테스트용)
-    const [candidates] = useState<CoverImage[]>([
+    // 기존 dummy candidates + AI로 생성된 후보도 추가될 예정
+    const [candidates, setCandidates] = useState<CoverImage[]>([
         {
             id: "1",
             url: "https://images.unsplash.com/photo-1526045478516-99145907023c",
@@ -77,37 +58,129 @@ export default function CoverGenerate({ onSelectCover }: CoverGenerateProps) {
         },
     ]);
 
-    // 🔹 어떤 후보가 선택됐는지 (UI + 부모에 전달)
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
+    const { mutateAsync, isPending } = useGenerateImageMutation();
 
     /**
-     * "Generate Cover" 버튼 클릭 시 실행되는 함수
-     * 현재는 API가 없기 때문에 단순히 로그만 추가하는 역할
+     * AI 이미지 생성 버튼 클릭
      */
-    const handleGenerate = () => {
-        // 입력이 비어있으면 무시
+    const handleGenerate = async () => {
         if (!prompt.trim()) return;
 
-        // UI 테스트용: 임의의 성공 로그 생성
-        const newItem: RequestLogItem = {
-            id: Date.now(), // 유니크한 ID
-            prompt,
-            status: "Success",
-            timeSec: Number((1.5 + Math.random()).toFixed(1)),
-        };
+        const tempId = Date.now();
+        const start = performance.now();
 
-        // 기존 logs 배열의 맨 앞에 새 로그 추가
-        setLogs((prev) => [newItem, ...prev]);
+        // 1) 기본 세팅 프롬프트 (역할/스타일 정의)
+        const basePrompt = `
+You are a professional book cover designer.
+Create a visually striking book cover in a modern illustration style.
+Avoid text on the cover. Focus on imagery, color, and composition.
+    `.trim();
 
+        // 2) 책 정보 정리 (요약이 없으면 content 일부 사용)
+        const storySummary =
+            content || (content ? content.slice(0, 300) : "No additional description.");
+
+        const bookContext = `
+Book title: "${title || "Untitled"}"
+Genre: ${genre || "Unknown"}
+Story summary: ${storySummary}
+    `.trim();
+
+        // 3) 사용자가 prompt 입력창에 쓴 값 (디자인 디테일)
+        const userDesignPrompt = prompt.trim()
+            ? `Design details from user: ${prompt.trim()}`
+            : `Design details: Use a composition that fits the genre and mood of the story.`;
+
+        // 4) 최종 프롬프트 합치기
+        const combinedPrompt = `
+${basePrompt}
+
+${bookContext}
+
+${userDesignPrompt}
+    `.trim();
+        console.log("📌 Combined Prompt Sent to AI:", combinedPrompt);
+
+        // 👉 여기부터는 기존 handleGenerate 흐름 재사용
+        // 로그에 찍을 ID
+        const logId = tempId;
+
+        // 로그: Pending 추가
+        setLogs((prev) => [
+            {
+                id: tempId,
+                prompt: combinedPrompt,
+                status: "Pending",
+                timeSec: 0,
+            },
+            ...prev,
+        ]);
+
+        try {
+            const result = await mutateAsync({ prompt: combinedPrompt });
+            const end = performance.now();
+            const elapsed = Number(((end - start) / 1000).toFixed(1));
+
+            if (!result.imageUrl) {
+                // 실패 로그 업데이트
+                setLogs((prev) =>
+                    prev.map((item) =>
+                        item.id === tempId
+                            ? { ...item, status: "Error", timeSec: elapsed }
+                            : item
+                    )
+                );
+                return;
+            }
+
+            // 새 CoverImage 생성
+            const newCover: CoverImage = {
+                id: String(tempId),
+                url: result.imageUrl,
+                prompt: combinedPrompt,
+            };
+
+            // 후보 리스트에 추가
+            setCandidates((prev) => [newCover, ...prev]);
+
+            // 메인 프리뷰에 자동 선택
+            setSelectedId(String(tempId));
+            onSelectCover?.(newCover);
+
+            // 성공 로그 업데이트
+            setLogs((prev) =>
+                prev.map((item) =>
+                    item.id === tempId
+                        ? { ...item, status: "Success", timeSec: elapsed }
+                        : item
+                )
+            );
+        } catch (err) {
+            const end = performance.now();
+            const elapsed = Number(((end - start) / 1000).toFixed(1));
+
+            setLogs((prev) =>
+                prev.map((item) =>
+                    item.id === tempId
+                        ? { ...item, status: "Error", timeSec: elapsed }
+                        : item
+                )
+            );
+        } finally {
+            setPrompt("");
+        }
     };
 
-    // 🔹 썸네일 클릭 시 호출
+    /**
+     * 후보 썸네일 클릭 시 선택 처리
+     */
     const handleSelectCandidate = (id: string) => {
         setSelectedId(id);
         const cover = candidates.find((c) => c.id === id);
         if (cover && onSelectCover) {
-            onSelectCover(cover); // 부모(page.tsx)에게 선택 알림
+            onSelectCover(cover);
         }
     };
 
@@ -115,17 +188,19 @@ export default function CoverGenerate({ onSelectCover }: CoverGenerateProps) {
         <Paper
             elevation={3}
             sx={{
-                borderRadius: 3, // 둥근 모서리
-                p: 3,            // padding
+                borderRadius: 3,
+                p: 3,
+                minHeight: 620,
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
             }}
         >
-            {/* 제목 */}
             <Typography variant="h6" fontWeight={600} gutterBottom>
                 AI Cover Generation
             </Typography>
 
             <Stack spacing={2} mt={1}>
-                {/* Prompt Label + Input Field */}
                 <Box>
                     <Typography
                         variant="subtitle2"
@@ -135,33 +210,36 @@ export default function CoverGenerate({ onSelectCover }: CoverGenerateProps) {
                         Prompt for AI
                     </Typography>
 
-                    {/* 프롬프트 입력창 */}
                     <TextField
                         fullWidth
+                        multiline
+                        minRows={3}
+                        maxRows={6}
                         placeholder="e.g., Dark fantasy with mystical elements"
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
-                        inputProps={{ maxLength: 200 }} // 최대 200자
+                        inputProps={{ maxLength: 200 }}
                     />
                 </Box>
 
-                {/* Generate Cover 버튼 */}
                 <Button
                     variant="contained"
                     fullWidth
+                    disabled={isPending}
                     onClick={handleGenerate}
                     sx={{
                         mt: 1,
                         py: 1.2,
                         fontWeight: 500,
+                        fontSize: "0.95rem",
                         backgroundColor: "black",
                         "&:hover": { backgroundColor: "#333" },
                     }}
                 >
-                    Generate Cover
+                    {isPending ? "Generating..." : "Generate Cover"}
                 </Button>
 
-                {/* Request Log 영역 */}
+                {/* Request Log */}
                 <Box mt={2}>
                     <Typography
                         variant="subtitle2"
@@ -177,11 +255,10 @@ export default function CoverGenerate({ onSelectCover }: CoverGenerateProps) {
                             backgroundColor: "#f5f5f5",
                             px: 2,
                             py: 1.5,
-                            maxHeight: 180,    // 최대 높이 (스크롤 발생)
-                            overflowY: "auto", // 스크롤 가능
+                            maxHeight: 180,
+                            overflowY: "auto",
                         }}
                     >
-                        {/* logs 배열을 화면에 출력 */}
                         {logs.map((item) => (
                             <Typography
                                 key={item.id}
@@ -193,7 +270,6 @@ export default function CoverGenerate({ onSelectCover }: CoverGenerateProps) {
                             </Typography>
                         ))}
 
-                        {/* 로그가 없는 경우 */}
                         {logs.length === 0 && (
                             <Typography variant="body2" color="text.secondary">
                                 No requests yet. Try generating a cover!
@@ -201,13 +277,13 @@ export default function CoverGenerate({ onSelectCover }: CoverGenerateProps) {
                         )}
                     </Box>
                 </Box>
-                {/* 🔹 후보 썸네일 리스트 */}
+
+                {/* 후보 이미지 리스트 */}
                 <CoverCandidateList
                     candidates={candidates}
                     selectedId={selectedId}
                     onSelect={handleSelectCandidate}
                 />
-
             </Stack>
         </Paper>
     );

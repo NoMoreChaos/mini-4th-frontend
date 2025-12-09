@@ -9,6 +9,7 @@ interface WritingAreaActionsProps {
     onCancel?: () => void;   // 지금은 선택적(optional)
 }
 
+
 export default function WritingAreaActions({
                                                onSave,
                                                onCancel,

@@ -1,3 +1,4 @@
+//hooks/mutations/generate-image/generateImage.ts
 import { useMutation } from "@tanstack/react-query";
 import { generateImage } from "@/api/generate-image/generateImage";
 import { GenerateImageResult } from "@/types/generateImage";

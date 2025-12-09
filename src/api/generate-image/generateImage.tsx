@@ -1,3 +1,4 @@
+// src/api/generate-image/generateImage.tsx
 import axios from "axios";
 
 // API 응답 타입을 정의합니다.
