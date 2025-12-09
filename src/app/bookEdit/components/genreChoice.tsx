@@ -11,7 +11,19 @@ interface GenreChoiceProps {
     onChange: (value: string) => void;
 }
 
-const GENRES = ["Fantasy", "Romance", "SF", "Essay", "Horror", "Etc"];
+const GENRES = [
+    "판타지",
+    "로맨스",
+    "SF",
+    "미스터리",
+    "스릴러",
+    "에세이",
+    "자기계발",
+    "역사",
+    "철학",
+    "동화",
+    "기타",
+];
 
 export default function GenreChoice({ value, onChange }: GenreChoiceProps) {
     return (

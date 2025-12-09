@@ -26,7 +26,7 @@ export default function BookList() {
             <div className="w-full max-w-5xl">
                 {/*
                     todo 1: 실제 API 연동 시에는 더미데이터 X 실제 데이터로 변경
-                    todo 2: 추가로 key={idx} book.book_id 로 수정 예정
+                    todo 2: 추가로 key={idx} update.book_id 로 수정 예정
                 */}
                 {books.map((book, idx) => (
                     <BookCard key={idx} {...book} />
