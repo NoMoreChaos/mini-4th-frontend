@@ -62,7 +62,7 @@
 
 ### 5. 📘 책 상세 페이지
 - 책 정보 + 생성된 커버 이미지 보여줌
-- 수정 페이지 이동 및 삭 버튼 제공
+- 수정 페이지 이동 및 삭제 버튼 제공
 <img width="2532" height="1344" alt="image" src="https://github.com/user-attachments/assets/d3485877-f057-45e3-b75e-abb267057113" />
 
 ---
