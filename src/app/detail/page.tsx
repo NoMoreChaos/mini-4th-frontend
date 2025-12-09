@@ -123,7 +123,7 @@ export default function DetailPage() {
                 <div className="w-60 h-80 bg-gray-100 rounded overflow-hidden">
                     {book.coverFileEn ? (
                         <Image
-                            src={`data:image/png;base64,${book.coverFileEn}`}
+                            src={book.coverFileEn}
                             alt="book cover"
                             width={400}
                             height={600}
