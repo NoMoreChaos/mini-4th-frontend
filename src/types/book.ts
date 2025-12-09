@@ -37,5 +37,5 @@ export interface BookEditLog {
 
 export interface BookListResponse {
     totalCount: number;
-    bookList: Book[];
+    bookList: BookHome[];
 }

@@ -2,10 +2,10 @@
 
 import Image from "next/image";
 import {Card, CardActionArea, CardContent, Typography} from "@mui/material";
-import {Book} from "@/types/book";
+import {BookHome} from "@/types/book";
 
 
-export default function BookCard({bookNm, bookCreateDt, bookSummaryDc, coverFileEn}: Book) {
+export default function BookCard({bookNm, bookCreateDt, bookSummaryDc, coverFileEn}: BookHome) {
     return (
         <Card className="w-full shadow-md rounded-4xl mb-6">
             <CardActionArea

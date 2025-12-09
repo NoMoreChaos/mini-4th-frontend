@@ -8,7 +8,7 @@ import React, {useEffect, useState} from "react";
 import {useQuery} from "@tanstack/react-query";
 import {getBookList} from "@/api/books/bookList";
 import {useRouter, useSearchParams} from "next/navigation";
-import {Book} from "@/types/book";
+import {BookHome} from "@/types/book";
 import BookCard from "@/app/components/BookCard";
 
 const HomePage: NextPage = () => {
@@ -67,7 +67,7 @@ const HomePage: NextPage = () => {
             ) : (
                 <div className="w-full max-w-5xl mb-6">
                     <div className="w-full">
-                        {bookList.map((book: Book) => (
+                        {bookList.map((book: BookHome) => (
                             <BookCard key={book.bookCd} {...book} />
                         ))}
                     </div>
