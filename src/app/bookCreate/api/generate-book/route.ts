@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// 책 등록 API (프론트에서 /api/book-Regist 로 호출)
+// 책 등록 API (프론트에서 /api/update-Regist 로 호출)
 export async function POST(req: NextRequest) {
     try {
         // 프론트에서 보낸 JSON 받기
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json(result ?? { success: true }, { status: 200 });
     } catch (err) {
-        console.error("book-Regist error:", err);
+        console.error("update-Regist error:", err);
         return NextResponse.json(
             { error: "서버 내부 오류가 발생했습니다." },
             { status: 500 }

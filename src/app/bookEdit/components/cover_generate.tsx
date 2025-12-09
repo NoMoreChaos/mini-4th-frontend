@@ -1,7 +1,7 @@
 // src/components/books/CoverGenerate.tsx
 "use client";
 
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -14,7 +14,7 @@ import { CoverImage } from "@/types/cover";
 import { useGenerateImageMutation } from "@/hooks/mutations/generate-image/generateImage";
 
 interface RequestLogItem {
-    id: number;
+    id: string; // ✅ string으로 사용
     prompt: string;
     status: "Success" | "Error" | "Pending";
     timeSec: number;
@@ -26,37 +26,56 @@ interface CoverGenerateProps {
     summary: string;
     content: string;
     genre: string;
+    initialCandidates?: CoverImage[];
 }
 
 export default function CoverGenerate({
                                           onSelectCover,
-    title,
-    summary,
-    content,
-    genre,
-
+                                          title,
+                                          summary,
+                                          content,
+                                          genre,
+    initialCandidates,
                                       }: CoverGenerateProps) {
     const [prompt, setPrompt] = useState("");
     const [logs, setLogs] = useState<RequestLogItem[]>([]);
 
-    // 기존 dummy candidates + AI로 생성된 후보도 추가될 예정
-    const [candidates, setCandidates] = useState<CoverImage[]>([
+    const defaultDummy: CoverImage[] = [
         {
-            id: "1",
+            id: "dummy-1",
             url: "https://images.unsplash.com/photo-1526045478516-99145907023c",
             prompt: ""
         },
         {
-            id: "2",
+            id: "dummy-2",
             url: "https://images.unsplash.com/photo-1532012197267-da84d127e765",
             prompt: ""
         },
         {
-            id: "3",
+            id: "dummy-3",
             url: "https://images.unsplash.com/photo-1507842217343-583bb7270b66",
             prompt: ""
         },
-    ]);
+    ];
+
+// 초기 렌더 시점 candidates
+    const [candidates, setCandidates] = useState<CoverImage[]>(() => {
+        if (initialCandidates && initialCandidates.length > 0) {
+            return initialCandidates;
+        }
+        return defaultDummy;
+    });
+
+// 나중에 initialCandidates가 바뀌는 경우도 반영하고 싶으면:
+    useEffect(() => {
+        if (!initialCandidates || initialCandidates.length === 0) return;
+
+        setCandidates((prev) => {
+            // 필요하면 여기서 중복 제거 로직도 추가 가능
+            return initialCandidates;
+        });
+    }, [initialCandidates]);
+
 
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -68,7 +87,8 @@ export default function CoverGenerate({
     const handleGenerate = async () => {
         if (!prompt.trim()) return;
 
-        const tempId = Date.now();
+        // ✅ id를 처음부터 string으로 생성
+        const tempId = String(Date.now());
         const start = performance.now();
 
         // 1) 기본 세팅 프롬프트 (역할/스타일 정의)
@@ -76,17 +96,22 @@ export default function CoverGenerate({
 You are a professional book cover designer.
 Create a visually striking book cover in a modern illustration style.
 Avoid text on the cover. Focus on imagery, color, and composition.
-    `.trim();
+        `.trim();
 
-        // 2) 책 정보 정리 (요약이 없으면 content 일부 사용)
+        // 2) 책 정보 정리
+        //    ✅ 요약이 있으면 summary 사용, 없으면 content 일부 사용
         const storySummary =
-            content || (content ? content.slice(0, 300) : "No additional description.");
+            summary && summary.trim().length > 0
+                ? summary.trim()
+                : (content && content.trim().length > 0
+                    ? content.slice(0, 300)
+                    : "No additional description.");
 
         const bookContext = `
 Book title: "${title || "Untitled"}"
 Genre: ${genre || "Unknown"}
 Story summary: ${storySummary}
-    `.trim();
+        `.trim();
 
         // 3) 사용자가 prompt 입력창에 쓴 값 (디자인 디테일)
         const userDesignPrompt = prompt.trim()
@@ -100,14 +125,10 @@ ${basePrompt}
 ${bookContext}
 
 ${userDesignPrompt}
-    `.trim();
+        `.trim();
         console.log("📌 Combined Prompt Sent to AI:", combinedPrompt);
 
-        // 👉 여기부터는 기존 handleGenerate 흐름 재사용
-        // 로그에 찍을 ID
-        const logId = tempId;
-
-        // 로그: Pending 추가
+        // 로그: Pending 추가 (✅ id를 string으로 일관되게 사용)
         setLogs((prev) => [
             {
                 id: tempId,
@@ -135,9 +156,9 @@ ${userDesignPrompt}
                 return;
             }
 
-            // 새 CoverImage 생성
+            // 새 CoverImage 생성 (✅ id도 string으로 유지)
             const newCover: CoverImage = {
-                id: String(tempId),
+                id: tempId,
                 url: result.imageUrl,
                 prompt: combinedPrompt,
             };
@@ -146,7 +167,7 @@ ${userDesignPrompt}
             setCandidates((prev) => [newCover, ...prev]);
 
             // 메인 프리뷰에 자동 선택
-            setSelectedId(String(tempId));
+            setSelectedId(tempId);
             onSelectCover?.(newCover);
 
             // 성공 로그 업데이트

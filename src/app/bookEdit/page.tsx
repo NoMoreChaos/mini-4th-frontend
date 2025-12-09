@@ -11,7 +11,6 @@ import GenreChoice from "./components/genreChoice";
 import Summary from "./components/SummaryField";
 import Content from"./components/ContentField";
 import CoverGenerate from "./components/cover_generate";
-import {useState} from "react";
 import Box from "@mui/material/Box";
 import MainPreviewCover from "@/app/bookEdit/components/covers/MainPreviewCover";
 import type {CoverImage} from "@/types/cover";
@@ -19,6 +18,10 @@ import { Book, BookEditLog } from "@/types/book";
 import WritingAreaActions from "./components/WritingAreaButtons";
 import { useSearchParams } from "next/navigation";
 import TopBar from "./components/TopBar";
+import { useState, useEffect } from "react";
+import { useFetchBook } from "@/hooks/mutations/update/useFetchBook"; // ⬅ GET 훅 import
+import { useUpdateBook } from "@/hooks/mutations/update/useUpdateBook";
+
 
 
 export default function BookEditPage() {
@@ -34,21 +37,48 @@ export default function BookEditPage() {
 
     // bookId query Param 불러오기
     const searchParams = useSearchParams();
-    const bookIdParam = searchParams.get("bookId"); // 문자열 또는 null
-    const numericBookId = bookIdParam ? Number(bookIdParam) : NaN;
+    const bookCdParam = searchParams.get("bookId"); // 문자열 또는 null
+    const BookCd = bookCdParam ?? "";
 
-    // 서버에서 불러올 책 전체
-    const [book, setBook] = useState<Book | null>(null);
     // 수정 로그
     const [editLogs, setEditLogs] = useState<BookEditLog[]>([]);
+    // GET 훅 사용
+    // app/bookEdit/page.tsx
+
+    const {
+        data: fetchedBook,
+        isLoading,
+        error,
+    } = useFetchBook(bookCdParam);
+
+    useEffect(() => {
+        if (!fetchedBook) return;
+
+        console.log("📥 fetchedBook (mapped):", fetchedBook);
+
+        // ✅ Book 타입 기준 필드 사용
+        setTitle(fetchedBook.title ?? "");
+        setGenre(fetchedBook.genre ?? "판타지");
+        setSummary(fetchedBook.summary ?? "");
+        setContent(fetchedBook.content ?? "");
+
+        if (fetchedBook.mainCover) {
+            setSelectedCover(fetchedBook.mainCover);
+        }
+        if (fetchedBook.covers) {
+            setCoverList(fetchedBook.covers);
+        }
+    }, [fetchedBook]);
+
+    const updateBookMutation = useUpdateBook();
 
     //현재 폼 상태를 로그로 남기는 함수
     const pushSnapshotLog = () => {
-        if (!numericBookId) return;
+        if (!BookCd) return;
 
         const log: BookEditLog = {
-            id: Date.now(),
-            bookId: numericBookId,
+            id: String(Date.now()),
+            bookId: BookCd,
             title,
             genre,
             summary,
@@ -60,36 +90,58 @@ export default function BookEditPage() {
         setEditLogs((prev) => [...prev, log]);
     };
 
-    // JSON 미리보기 함수 _ 콘솔 확인
     const handlePreviewPayload = () => {
-        // 1) 현재 상태를 스냅샷 로그로 추가
-        pushSnapshotLog();
+        if (!fetchedBook) {
+            console.error("❌ No fetchedBook, cannot save.");
+            return;
+        }
 
-        // 2) 서버에 실제로 보낼 메인 payload (로그와 분리해도 OK)
+        if (!selectedCover) {
+            console.error("❌ No selected cover. Please select a main cover before saving.");
+            alert("메인 표지 이미지를 하나 선택해 주세요.");
+            return;
+        }
+
         const payload = {
-            bookId: numericBookId,
-            title,
-            genre,
-            summary,
-            content,
-            mainCoverUrl: selectedCover ? selectedCover.url : null,
-            // 필요하다면 로그 전체도 같이 보낼 수 있음
-            logs: editLogs, // pushSnapshotLog 직후의 최신 로그까지 포함하고 싶으면 여기서 조정 가능
+            userCd: fetchedBook.userCd ?? "U0001",        // 백엔드 응답 기준으로 매핑
+            userNickNm: fetchedBook.userNickNm ?? "",
+            bookCd: fetchedBook.id,                      // "B0007"
+            bookNm: title,                               // 수정된 제목
+            bookSummaryDc: summary,
+            bookContentDc: content,
+            bookGenreFg: genre,
+            coverFileEn: selectedCover.url,              // ✅ 오직 메인 프리뷰 URL만 전송
+            coverCd: selectedCover.id,                   // ✅ 선택된 표지의 id
         };
 
-        console.log("백엔드에 보낼 예정 JSON:", payload);
+        console.log("📦 PUT payload ready:", payload);
+
+        updateBookMutation.mutate(payload, {
+            onSuccess: (data) => {
+                console.log("✅ Book updated successfully:", data);
+                alert("저장되었습니다!");
+            },
+            onError: (error: any) => {
+                console.error("❌ Failed to update book:", error?.response?.data || error);
+                alert("저장 중 오류가 발생했습니다. 콘솔을 확인해 주세요.");
+            },
+        });
     };
+
 
 
     return (
         <>
             <TopBar/>
             <Container maxWidth="lg" sx={{ pt: 3, pb: 6 }}>
-                {/*
-        좌우 2단 레이아웃
-        - xs: 세로(column)로 쌓이고
-        - md 이상: 가로(row)로 나란히
-      */}
+                {isLoading && (
+                    <Typography sx={{ mb: 2 }}>Loading book data...</Typography>
+                )}
+                {error && (
+                    <Typography color="error" sx={{ mb: 2 }}>
+                        Failed to load book data.
+                    </Typography>
+                )}
                 <Stack
                     direction={{ xs: "column", md: "row" }}
                     spacing={3}
@@ -156,6 +208,7 @@ export default function BookEditPage() {
                             summary={summary}
                             content={content}
                             genre={genre}
+                            initialCandidates={coverList}
                         />
                     </Box>
                 </Stack>
