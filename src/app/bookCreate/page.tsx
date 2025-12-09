@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
     Card,
@@ -36,6 +37,23 @@ const MAX_CONTENT = 2000;
 const MAX_PROMPT = 1000;
 
 export default function BookCoverPage() {
+
+    const router = useRouter();
+    const [userCd, setUserCd] = useState<string | null>(null);
+
+    // --------------------------------------------------
+    // 페이지 보호(로그인 없으면 접근 불가)
+    // --------------------------------------------------
+    useEffect(() => {
+        const userCd = localStorage.getItem("userCd");
+
+        if (!userCd) {
+            router.replace("/login");
+        } else {
+            setUserCd(userCd);
+        }
+    }, []);
+
     // --------------------------------------------------
     // 입력값 상태 관리
     // --------------------------------------------------
@@ -131,13 +149,17 @@ export default function BookCoverPage() {
             alert("첫 번째 대표 표지를 생성해야 등록 가능합니다.");
             return;
         }
+        if (!userCd) {
+            alert("로그인 정보가 없어 로그인 화면으로 이동합니다.");
+            router.replace("/login");
+            return;
+        }
 
         try {
             setSaving(true);
 
             const bookData = {
-                userCd: "sampleUserCd",
-                userNickNm: "sampleUserNick",
+                userCd: userCd,
                 bookNm: title,
                 bookSummaryDc: summary,
                 bookContentDc: content,
@@ -147,7 +169,7 @@ export default function BookCoverPage() {
                 coverFileEn: covers[0], // 대표 이미지
             };
 
-            const res = await fetch("/api/generate-book", {
+            const res = await fetch("/bookCreate/api/generate-book", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(bookData),
@@ -161,6 +183,8 @@ export default function BookCoverPage() {
             }
 
             alert("작품 등록 완료!");
+            // 목록 페이지로 이동
+            router.push("/");
         } catch (err: unknown) {
             if (err instanceof Error) {alert(err.message || "이미지 생성 오류");}
             else {alert("이미지 생성 오류");}
