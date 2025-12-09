@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
     Card,
@@ -36,6 +37,23 @@ const MAX_CONTENT = 2000;
 const MAX_PROMPT = 1000;
 
 export default function BookCoverPage() {
+
+    const router = useRouter();
+    const [userCd, setUserCd] = useState<string | null>(null);
+
+    // --------------------------------------------------
+    // 페이지 보호(로그인 없으면 접근 불가)
+    // --------------------------------------------------
+    useEffect(() => {
+        const userCd = localStorage.getItem("userCd");
+
+        if (!userCd) {
+            router.replace("/login");
+        } else {
+            setUserCd(userCd);
+        }
+    }, [router]);
+
     // --------------------------------------------------
     // 입력값 상태 관리
     // --------------------------------------------------
@@ -52,6 +70,7 @@ export default function BookCoverPage() {
     const [covers, setCovers] = useState<(string | null)[]>([null, null, null]);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [promptLoading, setPromptLoading] = useState(false);
     //const [errorMsg, setErrorMsg] = useState<string | null>(null);
     //const hasAnyCover = covers.some((c) => c !== null);
 
@@ -109,6 +128,47 @@ export default function BookCoverPage() {
     };
 
     // --------------------------------------------------
+    // 디자인 요청 프롬프트 자동 생성 함수
+    // --------------------------------------------------
+    const handleGeneratePrompt = async () => {
+        if (!title || !genre || !summary || !content) {
+            alert("도서명, 장르, 작품 소개, 내용을 모두 입력해주세요.");
+            return;
+        }
+
+        setPromptLoading(true);
+
+        try {
+            const res = await fetch("/bookCreate/api/generate-prompt", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    title,
+                    genre,
+                    summary,
+                    content
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => null);
+                alert(err?.error || "프롬프트 생성 실패");
+                return;
+            }
+
+            const data = await res.json();
+            if (data?.prompt) {
+                setPromptDetail(data.prompt);
+            }
+        } catch (err: unknown) {
+            console.error(err);
+            alert("프롬프트 생성 오류");
+        } finally {
+            setPromptLoading(false);
+        }
+    };
+
+    // --------------------------------------------------
     // 2번/3번 클릭 → 대표 이미지(1번)와 교체
     // --------------------------------------------------
     const swapWithFirst = (index: number) => {
@@ -131,13 +191,17 @@ export default function BookCoverPage() {
             alert("첫 번째 대표 표지를 생성해야 등록 가능합니다.");
             return;
         }
+        if (!userCd) {
+            alert("로그인 정보가 없어 로그인 화면으로 이동합니다.");
+            router.replace("/login");
+            return;
+        }
 
         try {
             setSaving(true);
 
             const bookData = {
-                userCd: "sampleUserCd",
-                userNickNm: "sampleUserNick",
+                userCd: userCd,
                 bookNm: title,
                 bookSummaryDc: summary,
                 bookContentDc: content,
@@ -147,7 +211,7 @@ export default function BookCoverPage() {
                 coverFileEn: covers[0], // 대표 이미지
             };
 
-            const res = await fetch("/api/generate-book", {
+            const res = await fetch("/bookCreate/api/generate-book", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(bookData),
@@ -161,6 +225,8 @@ export default function BookCoverPage() {
             }
 
             alert("작품 등록 완료!");
+            // 목록 페이지로 이동
+            router.push("/");
         } catch (err: unknown) {
             if (err instanceof Error) {alert(err.message || "이미지 생성 오류");}
             else {alert("이미지 생성 오류");}
@@ -450,7 +516,23 @@ export default function BookCoverPage() {
 
                                 {/* 프롬프트 */}
                                 <div>
-                                    <Typography variant="subtitle2" gutterBottom>프롬프트 (디자인 요청)</Typography>
+                                    <div className="flex justify-between items-center">
+                                        <Typography variant="subtitle2" gutterBottom>
+                                            프롬프트 (디자인 요청)
+                                        </Typography>
+
+                                        {/* 디자인 요청하기 버튼 */}
+                                        <Button
+                                            variant="outlined"
+                                            size="small"
+                                            onClick={handleGeneratePrompt}
+                                            disabled={promptLoading}
+                                            sx={{ textTransform: "none", borderRadius: "10px" }}
+                                        >
+                                            {promptLoading ? "생성 중..." : "디자인 요청하기"}
+                                        </Button>
+                                    </div>
+
                                     <Box sx={{ position: "relative" }}>
                                         <TextField
                                             fullWidth
@@ -459,12 +541,13 @@ export default function BookCoverPage() {
                                             value={promptDetail}
                                             onChange={(e) => {
                                                 const value = e.target.value;
-                                                setPromptDetail(value.slice(0, MAX_PROMPT));   // 🔥 1000자 제한
+                                                setPromptDetail(value.slice(0, MAX_PROMPT));
                                             }}
                                             placeholder={
                                                 "- 표지의 원하는 디자인 방향이 있다면 구체적으로 설명해 주세요.\n" +
                                                 "- 원하는 일러스트 스타일, 색감, 시대적 배경 등을 자세히 적을수록 더 정확한 표지가 생성됩니다.\n" +
-                                                "- 예: 따뜻한 파스텔 톤, 미니멀한 구성, 몽환적 일러스트 등"}
+                                                "- 예: 따뜻한 파스텔 톤, 미니멀한 구성, 몽환적 일러스트 등"
+                                            }
                                         />
                                         <Typography
                                             variant="caption"

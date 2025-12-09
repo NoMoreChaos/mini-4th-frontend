@@ -4,7 +4,7 @@
 ```
 -  사용자가 책 커버를 직접 생성하고 수정할 수 있는 웹 기반 북 커버 제작 서비스입니다.
 -  로그인 후 책 목록을 확인하고, 북 커버 생성·수정·상세 확인까지 모든 과정을 웹에서 처리할 수 있습니다.
--  Next.js · TypeScript · Tailwind · MUI로 제작되었으며, Vercel을 통해 배포됩니다.
+-  Next.js · TypeScript · Tailwind · MUI로 제작되었습니다.
 ```
 
 ### 🚩서비스 핵심 가치
@@ -23,13 +23,11 @@
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![MaterialUI](https://img.shields.io/badge/Material%20UI-%23FFFFFF?style=for-the-badge&logo=MUI&logoColor=#007FFF)
 ![NPM](https://img.shields.io/badge/NPM-%23CB3837.svg?style=for-the-badge&logo=npm&logoColor=white)
-![Vercel](https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
 ✨
 - **Framework**: Next.js (App Router)
 - **Language**: TypeScript
 - **UI**: Tailwind CSS, MUI (Material UI)
 - **Package Manager**: npm
-- **Deployment**: Vercel
 ---
 
 ## 📄 주요 페이지 (Pages)
