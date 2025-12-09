@@ -47,16 +47,16 @@ const HomePage: NextPage = () => {
                 <h2 className="text-3xl font-bold flex items-center gap-2 ">
                     <AutoStoriesOutlinedIcon sx={{mr: 1}}/> Walking Library
                 </h2>
-
-                <Button variant="contained" sx={{backgroundColor: 'black', '&:hover': {backgroundColor: '#333'}}}>
-                    My Bookshelf
-                </Button>
             </div>
 
             <div className="flex justify-between items-center w-full max-w-5xl mb-6 ">
                 <h2 className="text-2xl font-semibold">BOOK LIST</h2>
 
-                <Button variant="contained" sx={{backgroundColor: 'black', '&:hover': {backgroundColor: '#333'}}}>
+                <Button variant="contained" sx={{backgroundColor: 'black', '&:hover': {backgroundColor: '#333'}}}
+                        onClick={() => {
+                            router.push('/bookCreate');
+                        }}
+                >
                     <AddIcon fontSize={"small"} sx={{mr: 1}}/> Add Book
                 </Button>
             </div>

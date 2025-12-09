@@ -3,13 +3,17 @@
 import Image from "next/image";
 import {Card, CardActionArea, CardContent, Typography} from "@mui/material";
 import {BookHome} from "@/types/book";
+import {useRouter} from "next/navigation";
 
 
-export default function BookCard({bookNm, bookCreateDt, bookSummaryDc, coverFileEn}: BookHome) {
+export default function BookCard({bookCd, bookNm, bookCreateDt, bookSummaryDc, coverFileEn}: BookHome) {
+    const router = useRouter();
     return (
         <Card className="w-full shadow-md rounded-4xl mb-6">
             <CardActionArea
-                onClick={() => {}}
+                onClick={() => {
+                    router.push(`/detail?bookCd=${bookCd}`);
+                }}
                 sx={{
                     height: '100%',
                     '&:hover': {
