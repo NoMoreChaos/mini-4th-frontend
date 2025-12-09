@@ -8,11 +8,11 @@ export const getBookDetail = async (
 ): Promise<ApiResult<BookDetail>> => {
     try {
         const response = await axios.get<ApiResult<BookDetail>>(
-            "/api/books/detail/get",
+            "/api/books/detail",
             { params: { userCd, bookCd } }
         );
         return response.data;
-    } catch (error: unknown) {  // ← any 제거
+    } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
             return {
                 success: false,

@@ -11,33 +11,32 @@ export default function DetailPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const bookCd = searchParams.get("bookCd");   // URL: /detail?id=BOOK01
+    // bookCd는 null일 수도 있으므로 string | null 로 가져오기
+    const bookCd = searchParams.get("bookCd");
 
     const [book, setBook] = useState<BookDetail | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [userCd, setUserCd] = useState<string | null>(null);
 
+    // 유저 코드 가져오기
     useEffect(() => {
-        const storedUserCd = localStorage.getItem("userCd");
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setUserCd(storedUserCd);
+        setUserCd("U0001");
     }, []);
 
 
     // 상세 조회 API 호출
-    useEffect(()=> {
-        if (!bookCd) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setError("도서 코드가 없습니다.");
-            setLoading(false);
-            return;
-        }
+    useEffect(() => {
+        // 🎯 bookCd가 아직 없으면 API 호출하지 않고 기다린다
+        if (!bookCd) return;
 
+        // 🎯 userCd가 아직 로딩 전이면 기다린다
         if (!userCd) return;
 
         async function fetchDetail() {
             const result = await getBookDetail(userCd!, bookCd!);
+            console.log("API RESULT:", result);
+
 
             if (result.success) {
                 setBook(result.data);
@@ -49,7 +48,7 @@ export default function DetailPage() {
         }
 
         fetchDetail();
-    }, [bookCd,userCd]);
+    }, [bookCd, userCd]);
 
     // 삭제 기능
     const handleDelete = async () => {
@@ -62,7 +61,7 @@ export default function DetailPage() {
 
         if (result.success) {
             alert("삭제가 완료되었습니다.");
-            router.push("/"); // 책 목록 페이지 또는 홈으로 이동
+            router.push("/");
         } else {
             alert(result.error ?? "삭제 중 오류가 발생했습니다.");
         }
@@ -71,7 +70,9 @@ export default function DetailPage() {
     // 로딩 화면
     if (loading) {
         return (
-            <div className="max-w-5xl mx-auto px-6 py-10">불러오는 중...</div>
+            <div className="max-w-5xl mx-auto px-6 py-10">
+                불러오는 중...
+            </div>
         );
     }
 
@@ -98,12 +99,20 @@ export default function DetailPage() {
         );
     }
 
+
+
     // ---------------------------------------------
     // 실제 UI 표시 (책 상세)
     // ---------------------------------------------
-
     return (
         <div className="max-w-5xl mx-auto px-6 py-10">
+            <button
+                onClick={() => router.back()}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg"
+            >
+                ← <span>뒤로가기</span>
+            </button>
+
 
             {/* 책 기본 정보 */}
             <div className="bg-white rounded-xl shadow p-8 flex gap-8 mb-10">
