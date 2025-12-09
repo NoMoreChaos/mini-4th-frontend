@@ -26,8 +26,8 @@ export async function POST(req: NextRequest) {
         }
 
         // 실제 백엔드(스프링 등)로 전달할 주소
-        const backendBaseUrl = process.env.BACKEND_API_BASE_URL;
-
+        const backendBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        console.log("POST backendBaseUrl", backendBaseUrl);
         if (!backendBaseUrl) {
             return NextResponse.json(
                 { error: "BACKEND_API_BASE_URL 이 설정되어 있지 않습니다." },
