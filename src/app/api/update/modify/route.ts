@@ -53,7 +53,7 @@ export async function PUT(req: NextRequest) {
 
         return NextResponse.json(response.data);
     } catch (err: unknown) {
-        const error = err as AxiosError<any>;
+        const error = err as AxiosError<unknown>;
         console.error(
             "❌ Proxy PUT error:",
             error.response?.data || error.message || error
