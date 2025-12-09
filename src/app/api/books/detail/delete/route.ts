@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 export async function DELETE(req: Request) {
-    const { searchParams } = new URL(req.url);
+    const { searchParams } = req.nextUrl; // ★ 핵심
 
     const userCd = searchParams.get("userCd");
     const bookCd = searchParams.get("bookCd");

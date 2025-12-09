@@ -120,14 +120,14 @@ export default function DetailPage() {
             <div className="bg-white rounded-xl shadow p-8 flex gap-8 mb-10">
 
                 {/* 표지 이미지 */}
-                <div className="w-60 h-80 bg-gray-100 rounded overflow-hidden">
-                    {book.coverFileEn ? (
+                <div className="w-60 h-80 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
+                    {book.coverFileEn && book.coverFileEn.startsWith("data:image") ? (
                         <Image
                             src={book.coverFileEn}
                             alt="book cover"
                             width={400}
                             height={600}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-contain"
                         />
                     ) : (
                         <div className="w-full h-full bg-gray-300 flex items-center justify-center">
