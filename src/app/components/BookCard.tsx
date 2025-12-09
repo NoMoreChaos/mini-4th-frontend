@@ -2,18 +2,12 @@
 
 import Image from "next/image";
 import {Card, CardActionArea, CardContent, Typography} from "@mui/material";
+import {BookHome} from "@/types/book";
 
-interface BookCardProps {
-    title: string;
-    author: string;
-    date: string;
-    description: string;
-    image: string;
-}
 
-export default function BookCard({title, author, date, description, image}: BookCardProps) {
+export default function BookCard({bookNm, bookCreateDt, bookSummaryDc, coverFileEn}: BookHome) {
     return (
-        <Card className="w-full max-w-5xl shadow-md rounded-4xl mb-6">
+        <Card className="w-full shadow-md rounded-4xl mb-6">
             <CardActionArea
                 onClick={() => {}}
                 sx={{
@@ -33,24 +27,16 @@ export default function BookCard({title, author, date, description, image}: Book
                 >
                     <div className="w-28 h-40 relative flex-shrink-0">
                         <Image
-                            src={image}
-                            alt={title}
+                            src={coverFileEn}
+                            alt={bookNm}
                             fill
                             className="object-cover rounded-md"
                         />
                     </div>
 
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 flex-1 min-w-0">
                         <Typography variant="h6" className="font-bold" sx={{ fontWeight: 'bold', mb: 2 }}>
-                            {title}
-                        </Typography>
-
-                        <Typography variant="body2" className="text-gray-600" sx={{ fontWeight: 'semibold' }}>
-                            작성자: {author}
-                        </Typography>
-
-                        <Typography variant="body2" className="text-gray-600">
-                            생성일자: {date}
+                            {bookNm}
                         </Typography>
 
                         <Typography
@@ -62,9 +48,18 @@ export default function BookCard({title, author, date, description, image}: Book
                                 WebkitLineClamp: 3,
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
+                                minHeight: '80px', // 3 lines height
                             }}
                         >
-                            {description}
+                            {bookSummaryDc}
+                        </Typography>
+
+                        <Typography variant="body2" className="text-gray-600" sx={{textAlign: 'right'}}>
+                            {new Date(bookCreateDt).toLocaleDateString('ko-KR', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}
                         </Typography>
                     </div>
                 </CardContent>
