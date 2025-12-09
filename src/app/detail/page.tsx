@@ -21,8 +21,10 @@ export default function DetailPage() {
 
     // 유저 코드 가져오기
     useEffect(() => {
-        setUserCd("U0001");
+        const storedUserCd = localStorage.getItem("userCd");
+        setUserCd(storedUserCd);
     }, []);
+
 
 
     // 상세 조회 API 호출

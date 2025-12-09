@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
 
 export async function DELETE(req: Request) {
-    const body = await req.json();
-    const { userCd, bookCd } = body;
+    const { searchParams } = new URL(req.url);
 
-    const backendUrl = "http://waad.iptime.org/api/books/delete";
+    const userCd = searchParams.get("userCd");
+    const bookCd = searchParams.get("bookCd");
+
+    const backendUrl =
+        `http://waad.iptime.org/api/books/delete?userCd=${userCd}&bookCd=${bookCd}`;
 
     try {
         const response = await fetch(backendUrl, {
             method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userCd, bookCd })
+            headers: { "Content-Type": "application/json" }
         });
 
         const data = await response.json();

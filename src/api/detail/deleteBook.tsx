@@ -12,7 +12,7 @@ export const deleteBook = async (
     try {
         const response = await axios.delete<ApiResult<DeleteResult>>(
             "/api/books/detail/delete",
-            { data: { userCd, bookCd } }
+            { params: { userCd, bookCd } }
         );
         return response.data;
     } catch (error: unknown) {
