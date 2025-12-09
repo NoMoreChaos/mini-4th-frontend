@@ -50,6 +50,8 @@
 - 생성된 커버는 후보 3개 중에 1개 이미지 선택하여 저장
 <img width="2555" height="1345" alt="image" src="https://github.com/user-attachments/assets/d23e7c3b-0afe-4152-9b12-c5e314e67a45" />
 <img width="2550" height="1348" alt="image" src="https://github.com/user-attachments/assets/dfb91bbb-8313-4c32-8125-fb401eeeb97c" />
+[LLM모델로 디자인 텍스트 가이드 요청]
+<img width="782" height="375" alt="image" src="https://github.com/user-attachments/assets/e8b4a689-3e37-4a7d-b598-f8b3cf6e0ce2" />
 
 ### 4. ✏️ 책 커버 수정 페이지
 - 기존 커버 데이터 불러오기
@@ -67,6 +69,8 @@
 ## ⭐우리 프롬프트의 독자적 매력
 <br/>
 
+### 이미지 AI 모델
+
 | 특징                      | 설명                            |
 | ----------------------- | ----------------------------- |
 | **스토리 기반 추상 그래픽 변환**    | 텍스트 → 감정 → 색감/형태로 변환하는 독창적 구조 |
@@ -78,7 +82,14 @@
 
 <br/>
 
+### TEXT AI 모델
+
+| 특징                      | 설명                            |
+| ----------------------- | ----------------------------- |
+| **디자인 텍스트 가이드**    | 디자인을 요청해야 할지 막막하다면 텍스트로 가이드 받음 |
+
 ---
+
 ## ⚙️ 설치 및 실행 (Installation & Setup)
 1. 저장소 클론
 ```bash
