@@ -37,7 +37,8 @@ export default function BookEditPage() {
 
     // bookId query Param 불러오기
     const searchParams = useSearchParams();
-    const bookCdParam = searchParams.get("bookId"); // 문자열 또는 null
+    // bookId -> bookCd 에러 사항 수정
+    const bookCdParam = searchParams.get("bookCd"); // 문자열 또는 null
     const BookCd = bookCdParam ?? "";
 
     // 수정 로그
