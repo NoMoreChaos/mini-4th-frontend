@@ -41,8 +41,8 @@
 - 생성된 책 목록 조회
 - 책 상세 페이지로 이동 가능
 - 새 책 커버 생성 버튼 제공
-<img width="2553" height="1339" alt="image" src="https://github.com/user-attachments/assets/c7521d73-02fb-4f9f-85db-256591922e6b" />
-<img width="2555" height="1128" alt="image" src="https://github.com/user-attachments/assets/79a6b54d-57cd-4f84-8722-0095ba3b5de6" />
+<img width="2528" height="1333" alt="image" src="https://github.com/user-attachments/assets/8c2af663-1ea3-48cb-83d3-5b67da2ca1b9" />
+<img width="2533" height="1199" alt="image" src="https://github.com/user-attachments/assets/187b88b4-9dbe-45de-af1f-cad70284b86b" />
 
 ### 3. 🎨 책 커버 생성 페이지
 - 기본 템플릿 기반 커버 생성
@@ -57,8 +57,8 @@
 - 기존 커버 데이터 불러오기
 - 텍스트/색상/레이아웃 수정 가능
 - 수정 후 다시 저장하거나 미리보기 가능
-<img width="2549" height="1343" alt="image" src="https://github.com/user-attachments/assets/33e45eb2-2693-41b7-882a-34aa55fd553c" />
-<img width="2555" height="1347" alt="image" src="https://github.com/user-attachments/assets/5272a127-7caf-4376-8d1d-c44891dd39ef" />
+<img width="2524" height="1328" alt="image" src="https://github.com/user-attachments/assets/8ad1dbfa-da20-4350-bea1-77095f35a0e7" />
+<img width="2535" height="1343" alt="image" src="https://github.com/user-attachments/assets/8fe07071-218f-4b6f-9b6c-34c36fdf2576" />
 
 ### 5. 📘 책 상세 페이지
 - 책 정보 + 생성된 커버 이미지 보여줌
