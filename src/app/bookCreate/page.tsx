@@ -52,7 +52,7 @@ export default function BookCoverPage() {
         } else {
             setUserCd(userCd);
         }
-    }, []);
+    }, [router]);
 
     // --------------------------------------------------
     // 입력값 상태 관리
