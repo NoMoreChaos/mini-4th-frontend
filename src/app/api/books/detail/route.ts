@@ -6,7 +6,7 @@ export async function GET(req: Request) {
     const userCd = searchParams.get("userCd");
     const bookCd = searchParams.get("bookCd");
 
-    const backendUrl = `http://waad.iptime.org/api/books/detail?userCd=${userCd}&bookCd=${bookCd}`;
+    const backendUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/books/detail?userCd=${userCd}&bookCd=${bookCd}`;
 
     try {
         const response = await fetch(backendUrl, {
