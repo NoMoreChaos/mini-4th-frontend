@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 
 import Container from "@mui/material/Container";
 import Card from "@mui/material/Card";
@@ -27,6 +27,7 @@ import { useFetchBook } from "@/hooks/mutations/update/useFetchBook";
 import { useUpdateBook } from "@/hooks/mutations/update/useUpdateBook";
 
 export default function BookEditClient() {
+    const router = useRouter();
     // -----------------------------
     // Query Param
     // -----------------------------
@@ -130,6 +131,7 @@ export default function BookEditClient() {
         updateBookMutation.mutate(payload, {
             onSuccess: () => {
                 alert("저장되었습니다.");
+                router.back()
             },
             onError: (err: unknown) => {
                 console.error("❌ update error:", err);
