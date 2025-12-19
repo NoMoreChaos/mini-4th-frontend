@@ -13,8 +13,8 @@ export async function DELETE(req: NextRequest) {
         );
     }
 
-    const backendUrl =
-        `${process.env.BACKEND_BASE_URL}/api/books/delete?userCd=${userCd}&bookCd=${bookCd}`;
+    const backendUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/books/delete?userCd=${userCd}&bookCd=${bookCd}`;
+
 
     try {
         const response = await fetch(backendUrl, {
