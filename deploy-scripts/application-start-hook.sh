@@ -8,6 +8,7 @@ nvm use 24.11.1
 
 cd /home/ec2-user/mini-4th-frontend
 
-pkill -f "next start" || true
+npm install --omit=dev
+npx next build
 
 npx next start -p 3000
