@@ -2,11 +2,11 @@ version: 0.0
 os: linux
 
 files:
-  - source: ~/
-    destination: ~/mini-4th-frontend
+  - source: /
+    destination: /home/ec2-user/mini-4th-frontend
 
 permissions:
-  - object: ~/mini-4th-frontend
+  - object: /home/ec2-user/mini-4th-frontend
     pattern: '**'
     mode: '0755'
     owner: root
