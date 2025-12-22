@@ -1,6 +1,6 @@
 set -e
 
-export NVM_DIR="$HOME/.nvm"
+export NVM_DIR="/home/ec2-user/.nvm"
 source "$NVM_DIR/nvm.sh"
 
 nvm install 24.11.1
