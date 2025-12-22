@@ -21,4 +21,5 @@ artifacts:
     - "package.json"
     - "next.config.*"
 
+    - "appspec.yml"
     - "deploy-scripts/**/*"
