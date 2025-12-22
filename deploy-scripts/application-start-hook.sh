@@ -8,7 +8,6 @@ nvm use 24.11.1
 
 cd /home/ec2-user/mini-4th-frontend
 
-npm install --omit=dev
-npx next build
+npm install
 
 npx next start -p 3000
