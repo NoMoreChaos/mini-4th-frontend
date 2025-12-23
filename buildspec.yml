@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      nodejs: 22
+      nodejs: 25.2.1
         - echo "=== NODE CHECK ==="
         - node -v
         - npm -v

@@ -1,12 +1,12 @@
 set -e
 
-export NVM_DIR="/home/ec2-user/.nvm"
+export NVM_DIR="/home/ubuntu/.nvm"
 source "$NVM_DIR/nvm.sh"
 
-nvm install 22
-nvm use 22
+nvm install 25.2.1
+nvm use 25.2.1
 
-cd /home/ec2-user/mini-4th-frontend
+cd /home/ubuntu/mini-4th-frontend
 
 npm install
 

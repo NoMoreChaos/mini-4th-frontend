@@ -3,14 +3,14 @@ os: linux
 
 files:
   - source: /
-    destination: /home/ec2-user/mini-4th-frontend
+    destination: /home/ubuntu/mini-4th-frontend
 
 permissions:
-  - object: /home/ec2-user/mini-4th-frontend
+  - object: /home/ubuntu/mini-4th-frontend
     pattern: '**'
     mode: '0755'
-    owner: ec2-user
-    group: ec2-user
+    owner: ubuntu
+    group: ubuntu
     type:
       - file
       - directory
