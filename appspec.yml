@@ -3,10 +3,10 @@ os: linux
 
 files:
   - source: /
-    destination: /home/ubuntu/mini-4th-frontend
+    destination: /home/ubuntu/app
 
 permissions:
-  - object: /home/ubuntu/mini-4th-frontend
+  - object: /home/ubuntu/app
     pattern: '**'
     mode: '0755'
     owner: ubuntu

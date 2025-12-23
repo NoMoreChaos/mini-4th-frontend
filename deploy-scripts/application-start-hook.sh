@@ -7,7 +7,7 @@ export NVM_DIR="$HOME/.nvm"
 nvm install 25.2.1
 nvm use 25.2.1
 
-cd /home/ubuntu/mini-4th-frontend
+cd /home/ubuntu/app
 
 pkill -f "next start" || true 
 pkill node || true
