@@ -11,4 +11,4 @@ cd /home/ubuntu/mini-4th-frontend
 
 npm install
 
-nohup npx next start -p 80 > ~/app.log &
+nohup npx next start -p 80 > /home/ubuntu/next.log 2>&1 &
