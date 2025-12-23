@@ -11,4 +11,4 @@ cd /home/ubuntu/mini-4th-frontend
 
 npm install
 
-npx next start -p 80
+npx next start -p 80 &
